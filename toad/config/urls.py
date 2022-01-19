@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('user', include('user.urls')),
-    path('book', include('book.urls')),
-    path('like', include('like.urls')),
+    path('', include('user.urls')),
+    #path('/user/login/kakao/callback/', getUserInfo),
+    #path('book', include('book.urls')),
+    #path('like', include('like.urls')),
 ]
