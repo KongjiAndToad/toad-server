@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cosorong',
     'user',
+    'book',
     'rest_framework',
 ]
 
