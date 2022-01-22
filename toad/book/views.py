@@ -17,6 +17,8 @@ class BookListView(View):
         book_list = [{
             "book_num" : book.book_num,
             "title" : book.title,
+            "user_id" : book.user.id,
+            "liked_count" : book.liked_count
         }for book in books]
 
         return JsonResponse({"RESULT" : book_list}, status=200)
