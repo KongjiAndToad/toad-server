@@ -117,3 +117,5 @@ dmypy.json
 .idea/
 *venv_web/
 *secrets.json
+*my_settings.py
+
