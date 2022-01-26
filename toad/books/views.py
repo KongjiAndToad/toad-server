@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from .models import Book
-from user.models import User
+from users.models import User
 
 #내 서재 전체 조회
 class BookListView(View):
