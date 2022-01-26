@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from .models import Book
-from user.models import User
+from users.models import User
 
 #내 서재 전체 조회
 class BookListView(View):
@@ -17,7 +17,7 @@ class BookListView(View):
         books = Book.objects.all().filter(user=user_id).order_by(SORT)
 
         book_list = [{
-            "book_num" : book.book_num,
+            "book_id" : book.id,
             "title" : book.title,
             "user_id" : book.user.id,
             "liked_count" : book.liked_count
@@ -43,7 +43,7 @@ class MyBookSearchView(View):
             return JsonResponse({"RESULT": []}, status=200)
 
         books_list = [{
-            "book_num": book.book_num,
+            "book_id": book.id,
             "title": book.title,
             "user_id": book.user.id,
             "liked_count": book.liked_count,
@@ -69,7 +69,7 @@ class SearchBookView(View):
             return JsonResponse({"RESULT": []}, status=200)
 
         books_list = [{
-            "book_num": book.book_num,
+            "book_id": book.id,
             "title" : book.title,
             "user_id" : book.user.id,
             "liked_count" : book.liked_count,
