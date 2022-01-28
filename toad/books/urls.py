@@ -6,7 +6,7 @@ from books.views import (
 )
 
 urlpatterns = [
-    path('/users/<int:user_id>', BookListView.as_view()),
+    path('/users', BookListView.as_view()),
     path('/search', SearchBookView.as_view()),
-    path('/users/<int:user_id>/search', MyBookSearchView.as_view()),
+    path('/users/search', MyBookSearchView.as_view()),
 ]

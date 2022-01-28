@@ -2,6 +2,7 @@ import json
 from django.http.response import JsonResponse
 from django.views import View
 from django.db.models import Q
+from users.decorators import login_decorator
 
 from django.shortcuts import render
 
@@ -10,11 +11,12 @@ from users.models import User
 
 #내 서재 전체 조회
 class BookListView(View):
-    def get(self, request, user_id):
-        user = User.id
+    @login_decorator
+    def get(self, request):
+        user = request.user.id
         SORT = request.GET.get('sort','')
 
-        books = Book.objects.all().filter(user=user_id).order_by(SORT)
+        books = Book.objects.all().filter(user=user).order_by(SORT)
 
         book_list = [{
             "book_id" : book.id,
@@ -27,12 +29,13 @@ class BookListView(View):
 
 #내 서재 내에서 검색
 class MyBookSearchView(View):
-    def get(self, request, user_id):
-        user = User.id
+    @login_decorator
+    def get(self, request):
+        user = request.user.id
         book_title = request.GET.get('title','')
         SORT = request.GET.get('sort','')
 
-        books = Book.objects.filter(user=user_id)
+        books = Book.objects.filter(user=user)
 
         if book_title:
             if len(book_title)>1:

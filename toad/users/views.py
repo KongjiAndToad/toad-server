@@ -69,9 +69,13 @@ class LoginView(View):
                 user = User.objects.get(email=email)
                 #Password 검사 및 암호화
                 if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                    token = jwt.encode({'email' : email}, my_settings.SECRET['secret'], algorithm = 'HS256')
+                    token = jwt.encode({'email' : email}, my_settings.SECRET['secret'], algorithm = 'HS256').decode('utf-8')
                     #로그인 성공(200)
-                    return JsonResponse({'message':'SUCESS'}, status=200)
+
+                    return JsonResponse({
+                        "message":"SUCCESS",
+                        "token" : token
+                    }, status=200)
                 #로그인 실패 - 비밀번호 오류 (401)
                 return JsonResponse({"message":"INVALID_PASSWORD"}, status=401)
             #로그인 실패 - 아이디 오류(401)
