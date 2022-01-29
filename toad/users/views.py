@@ -26,6 +26,16 @@ def validate_password(password):
         return JsonResponse({'message': 'SHORT_PASSWORD'}, status=400)
 
 class SignUpView(View):
+    def validate_email(email):
+        pattern = re.compile('^.+@+.+\.+.+$')
+        if not pattern.match(email):
+            return JsonResponse({'message': 'INVALID_EMAIL'}, status=400)
+
+    # 패스워드 길이 검사
+    def validate_password(password):
+        if len(password) < MINIMUM_PASSWORD_LENGTH:
+            return JsonResponse({'message': 'SHORT_PASSWORD'}, status=400)
+
     @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request):
         data = json.loads(request.body)
@@ -40,8 +50,13 @@ class SignUpView(View):
                 return JsonResponse({'message': 'KEY_ERROR'}, status=400)
 
                 # validation check
-            validate_email(email)
-            validate_password(password)
+            pattern = re.compile('^.+@+.+\.+.+$')
+            if not pattern.match(email):
+                return JsonResponse({'message': 'INVALID_EMAIL'}, status=400)
+
+            if len(password) < MINIMUM_PASSWORD_LENGTH:
+                return JsonResponse({'message': 'SHORT_PASSWORD'}, status=400)
+
             # unique check
             user = User.objects.filter(Q(email=email))
             if not user:
