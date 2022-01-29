@@ -94,14 +94,38 @@ class LikeView(View):
             book.likes.remove(user)
             book.liked_count = book.likes.count()
             message = "좋아요 취소"
+            book.save()
         else:
             book.likes.add(user)
             book.liked_count = book.likes.count()
             message = "좋아요"
+            book.save()
 
         return JsonResponse({
             "book" : book.id,
             "user" : user.id,
             "liked_count" : book.liked_count,
             "message" : message
+        }, status=200)
+
+    @login_decorator
+    def get(self, request):
+        SORT = request.GET.get('sort','')
+        user = request.user
+
+        books = user.likes.all()
+        if not books:
+            return JsonResponse({"RESULT": [], "message" : "좋아요한 책이 없습니다."}, status=200)
+
+        books_list = [{
+            "book_id": book.id,
+            "title": book.title,
+            "author": book.user.id,
+            "liked_count": book.liked_count,
+        } for book in books]
+
+        return JsonResponse({
+            "user" : user.id,
+            "RESULT": books_list,
+            "books_count": len(books)
         }, status=200)
