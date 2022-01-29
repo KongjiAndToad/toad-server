@@ -82,3 +82,26 @@ class SearchBookView(View):
             "RESULT" : books_list,
             "books_count" : len(books)
         }, status=200)
+
+
+class LikeView(View):
+    @login_decorator
+    def post(self, request, book_id):
+        book = Book.objects.get(id=book_id)
+        user = request.user
+
+        if user in book.likes.all():
+            book.likes.remove(user)
+            book.liked_count = book.likes.count()
+            message = "좋아요 취소"
+        else:
+            book.likes.add(user)
+            book.liked_count = book.likes.count()
+            message = "좋아요"
+
+        return JsonResponse({
+            "book" : book.id,
+            "user" : user.id,
+            "liked_count" : book.liked_count,
+            "message" : message
+        }, status=200)
