@@ -1,5 +1,6 @@
 import json
 from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.views import View
 from django.db.models import Q
 from users.decorators import login_decorator
@@ -41,7 +42,7 @@ class MyBookSearchView(View):
             if len(book_title)>1:
                 books = books.filter(title__icontains=book_title).order_by(SORT)
             else:
-                return JsonResponse({"MESSAGE": "검색어는 2글자 이상 입력해주세요"}, status=404)
+                return JsonResponse({"MESSAGE": "검색어는 2글자 이상 입력해주세요"}, status=400)
         if not books:
             return JsonResponse({"RESULT": []}, status=200)
 
@@ -67,7 +68,7 @@ class SearchBookView(View):
             if len(book_title)>1:
                 books = Book.objects.filter(title__icontains=book_title).order_by(SORT)
             else:
-                return JsonResponse({"MESSAGE": "검색어는 2글자 이상 입력해주세요"}, status=404)
+                return JsonResponse({"MESSAGE": "검색어는 2글자 이상 입력해주세요"}, status=400)
         if not books:
             return JsonResponse({"RESULT": []}, status=200)
 
@@ -87,7 +88,7 @@ class SearchBookView(View):
 class LikeView(View):
     @login_decorator
     def post(self, request, book_id):
-        book = Book.objects.get(id=book_id)
+        book = get_object_or_404(Book, pk=book_id)
         user = request.user
 
         if user in book.likes.all():
