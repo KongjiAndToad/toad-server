@@ -1,4 +1,0 @@
-*.py[co]
-
-data/models/*
-!data/models/.gitkeep
