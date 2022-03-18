@@ -84,7 +84,7 @@ def simple_replace(text):
     # 중복된 문장 부호는 마지막 문장부호로 변경
     text = re.sub(r"[.?!]+\?", "?", text)
     text = re.sub(r"[.?!]+!", "!", text)
-    text = re.sub(r"[.?!]+\.", ".", text)
+    text = re.sub(r"[.?!]+\.", "books", text)
 
     # 기본 자모음
     text = re.sub(r"ㄱ", "기역", text)
