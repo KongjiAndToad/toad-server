@@ -15,7 +15,7 @@ import scipy.io.wavfile as swavfile
 
 from synthesys import SAMPLING_RATE
 from synthesys import generate_audio_glow_tts
-from text_processer import normalize_text, process_text
+from text_processor import normalize_text, process_text
 
 app = Flask(__name__)
 
