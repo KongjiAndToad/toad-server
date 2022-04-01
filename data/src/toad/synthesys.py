@@ -1,3 +1,4 @@
+'''
 import sys
 import os
 
@@ -118,3 +119,4 @@ def generate_audio_fastspeech2(text):
     mel = inference_fastspeech2(text, fastspeech2)
     audio = synthesis(mb_melgan, pqmf, mel)
     return audio
+'''

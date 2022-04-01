@@ -1,6 +1,8 @@
+'''
 import sys
 import re
 from unicodedata import normalize
+
 
 sys.path.append("/content/src/glow-tts")
 from text import symbols as glowtts_symbols
@@ -151,3 +153,4 @@ def process_text(text):
         if text:
             results.append(text)
     return results
+'''

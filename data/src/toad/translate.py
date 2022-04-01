@@ -1,3 +1,4 @@
+'''
 from konlpy.tag import Okt
 from konlpy.tag import Kkma
 import pickle
@@ -44,3 +45,4 @@ def translate(txt):
 
     res.append('\n')
     return "".join(res)
+'''
