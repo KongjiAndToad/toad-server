@@ -1,15 +1,10 @@
-<<<<<<< HEAD
-=======
-'''
->>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")
+
+
 import sys
 import re
 from unicodedata import normalize
 
-<<<<<<< HEAD
-=======
 
->>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")
 sys.path.append("/content/src/glow-tts")
 from text import symbols as glowtts_symbols
 
@@ -159,7 +154,3 @@ def process_text(text):
         if text:
             results.append(text)
     return results
-<<<<<<< HEAD
-=======
-'''
->>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")

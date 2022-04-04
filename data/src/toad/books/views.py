@@ -17,33 +17,36 @@ from io import BytesIO
 import scipy.io.wavfile as swavfile
 from translate import translate
 
-
 class BookListView(View):
     # 내 서재 전체 조회
-    @login_decorator
+#    @login_decorator
     def get(self, request):
-        user = request.user.id
-        SORT = request.GET.get('sort', '')
+        #user = request.user.id
+        #SORT = request.GET.get('sort', '')
 
-        books = Book.objects.all().filter(user=user).order_by(SORT)
+        #books = Book.objects.all().filter(user=user).order_by(SORT)
+        books = Book.objects.all()
 
         book_list = [{
             "book_id": book.id,
             "title": book.title,
-            "user_id": book.user.id,
-            "liked_count": book.liked_count
+            #"user_id": book.user.id,
+            #"liked_count": book.liked_count
         } for book in books]
 
         return JsonResponse({"RESULT": book_list}, status=200)
-
     # 새로운 책 생성
-    @login_decorator
+#    @login_decorator
     def post(self, request):
+        data = json.loads(request.body)
 
-        user = request.user.id
-        title = request.POST['title']
-        txt = request.POST['content']
-        liked_count = 0
+        #user = request.user.id
+        #title = request.POST['title']
+        #txt = request.POST['content']
+
+        title = data.get('title')
+        txt = data.get('txt')
+        #liked_count = 0
 
         # 기계 번역
         content = translate(txt)
@@ -64,8 +67,8 @@ class BookListView(View):
         book = Book(
             title=title,
             content=content,
-            user=user,
-            liked_count=liked_count,
+            #user=user,
+            #liked_count=liked_count,
             audio=audio,
         )
         book.save()
@@ -75,9 +78,9 @@ class BookListView(View):
 
 # 내 서재 내에서 검색
 class MyBookSearchView(View):
-    @login_decorator
+    #@login_decorator
     def get(self, request):
-        user = request.user.id
+        #user = request.user.id
         book_title = request.GET.get('title', '')
         SORT = request.GET.get('sort', '')
 
@@ -94,8 +97,8 @@ class MyBookSearchView(View):
         books_list = [{
             "book_id": book.id,
             "title": book.title,
-            "user_id": book.user.id,
-            "liked_count": book.liked_count,
+            #"user_id": book.user.id,
+            #"liked_count": book.liked_count,
         } for book in books]
 
         return JsonResponse({
@@ -108,11 +111,12 @@ class MyBookSearchView(View):
 class SearchBookView(View):
     def get(self, request):
         book_title = request.GET.get('title', '')
-        SORT = request.GET.get('sort', '')
+        # SORT = request.GET.get('sort', '')
 
         if book_title:
             if len(book_title) > 1:
-                books = Book.objects.filter(title__icontains=book_title).order_by(SORT)
+                # books = Book.objects.filter(title__icontains=book_title).order_by(SORT)
+                books = Book.objects.filter(title__icontains=book_title)
             else:
                 return JsonResponse({"MESSAGE": "검색어는 2글자 이상 입력해주세요"}, status=400)
         if not books:
@@ -121,15 +125,14 @@ class SearchBookView(View):
         books_list = [{
             "book_id": book.id,
             "title": book.title,
-            "user_id": book.user.id,
-            "liked_count": book.liked_count,
+            # "user_id": book.user.id,
+            # "liked_count": book.liked_count,
         } for book in books]
 
         return JsonResponse({
             "RESULT": books_list,
             "books_count": len(books)
         }, status=200)
-
 
 class LikeView(View):
     @login_decorator
