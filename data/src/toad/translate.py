@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+'''
+>>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")
 from konlpy.tag import Okt
 from konlpy.tag import Kkma
 import pickle
@@ -43,4 +47,9 @@ def translate(txt):
             res.append(tmp[0])
 
     res.append('\n')
+<<<<<<< HEAD
     return "".join(res)
+=======
+    return "".join(res)
+'''
+>>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")

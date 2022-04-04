@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+'''
+>>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")
 import sys
 import os
 
@@ -118,3 +122,7 @@ def generate_audio_fastspeech2(text):
     mel = inference_fastspeech2(text, fastspeech2)
     audio = synthesis(mb_melgan, pqmf, mel)
     return audio
+<<<<<<< HEAD
+=======
+'''
+>>>>>>> parent of 0cb6d73 (Delete : "without deep learning server")
