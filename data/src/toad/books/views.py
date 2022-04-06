@@ -9,13 +9,14 @@ from django.shortcuts import render, redirect
 
 from .models import Book
 from users.models import User
-
+'''
 from text_processor import process_text
 from synthesys import SAMPLING_RATE
 from synthesys import generate_audio_glow_tts
 from io import BytesIO
 import scipy.io.wavfile as swavfile
 from translate import translate
+'''
 
 class BookListView(View):
     # 내 서재 전체 조회
@@ -36,6 +37,7 @@ class BookListView(View):
 
         return JsonResponse({"RESULT": book_list}, status=200)
     # 새로운 책 생성
+    '''
 #    @login_decorator
     def post(self, request):
         data = json.loads(request.body)
@@ -73,7 +75,7 @@ class BookListView(View):
         )
         book.save()
         return redirect('/users')
-
+'''
 
 
 # 내 서재 내에서 검색

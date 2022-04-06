@@ -6,10 +6,10 @@ class Book(models.Model):
     title = models.CharField(max_length=45)
     content = models.TextField()
     audio = models.CharField(max_length=200)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_book')
-    liked_count = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_book', null=True, blank=True)
+    liked_count = models.IntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    likes = models.ManyToManyField(User, related_name='likes', null=True, blank=True)
 
     class Meta:
         db_table = "books"
