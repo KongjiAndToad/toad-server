@@ -4,11 +4,13 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from django.db.models import Q
 from users.decorators import login_decorator
+import requests, os
 
 from django.shortcuts import render, redirect
 
 from .models import Book
 from users.models import User
+
 '''
 from text_processor import process_text
 from synthesys import SAMPLING_RATE
@@ -17,6 +19,9 @@ from io import BytesIO
 import scipy.io.wavfile as swavfile
 from translate import translate
 '''
+
+
+
 
 class BookListView(View):
     # 내 서재 전체 조회
@@ -36,6 +41,7 @@ class BookListView(View):
         } for book in books]
 
         return JsonResponse({"RESULT": book_list}, status=200)
+
     # 새로운 책 생성
     '''
 #    @login_decorator
@@ -181,3 +187,28 @@ class LikeView(View):
             "RESULT": books_list,
             "books_count": len(books)
         }, status=200)
+
+class TestView(View):
+    def get(self, request):
+        response = requests.get(url="http://localhost:8080/todo/1")
+        return JsonResponse({
+            "content": response.json()
+        })
+
+    def post(self, request):
+
+        os.environ['NO_PROXY'] = '127.0.0.1'
+        params ={"todoName" : "밥먹기"}
+
+        data = json.loads(request.body)
+        todoName = data.get('todoName')
+        #txt = data.get('txt')
+
+        r = requests.post(url='http://127.0.0.1:8080/todo/django',  json={'todoName': todoName})
+        print("hello")
+        print(r)
+        print(r.content)
+        stringcontent = str(r.content)
+        return JsonResponse({
+            "name" : stringcontent
+        })
