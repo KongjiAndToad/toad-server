@@ -1,6 +1,12 @@
 
 from pathlib import Path
 import pymysql
+import django_heroku
+
+DEBUG = False
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+
+
 
 pymysql.install_as_MySQLdb()
 
@@ -31,9 +37,6 @@ def get_secret(setting, secrets=secrets): #예외 처리를 통해 오류 발생
 
 SECRET_KEY = get_secret("SECRET_KEY")
 
-DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -59,6 +62,8 @@ MIDDLEWARE = [
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -159,3 +164,6 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
