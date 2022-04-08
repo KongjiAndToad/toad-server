@@ -1,10 +1,10 @@
 
 from pathlib import Path
 import pymysql
-import django_heroku
+import dj_database_url
 
 DEBUG = False
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -165,5 +165,9 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
 )
 
-# Activate Django-Heroku.
-django_heroku.settings(locals())
+db_from_env = dj_database_url.config(conn_max_age=500) # DB 설정부분 아래에 입력
+DATABASES['default'].update(db_from_env) # DB 설정부분 아래에 입력
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
