@@ -1,4 +1,8 @@
 import json
+import wave
+from urllib.parse import urlparse
+import urllib.request as req
+
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
@@ -10,6 +14,9 @@ from django.shortcuts import render, redirect
 
 from .models import Book
 from users.models import User
+
+import io,wave
+
 
 '''
 from text_processor import process_text
@@ -36,6 +43,7 @@ class BookListView(View):
         book_list = [{
             "book_id": book.id,
             "title": book.title,
+            "content" : book.content,
             #"user_id": book.user.id,
             #"liked_count": book.liked_count
         } for book in books]
@@ -43,45 +51,29 @@ class BookListView(View):
         return JsonResponse({"RESULT": book_list}, status=200)
 
     # 새로운 책 생성
-    '''
+
 #    @login_decorator
     def post(self, request):
+
         data = json.loads(request.body)
+        title = data["title"]
+        text = data["text"]
+        #title = data.get('title')
+        #text = data.get('text')
 
-        #user = request.user.id
-        #title = request.POST['title']
-        #txt = request.POST['content']
+        text_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-text', json={'text': text})
+        #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
-        title = data.get('title')
-        txt = data.get('txt')
-        #liked_count = 0
 
-        # 기계 번역
-        content = translate(txt)
+        jsonText = text_process.json()
+        strText = str(jsonText)[2:-2]
 
-        # 음성 합성
-        text = process_text(content)
-        wav = BytesIO()
-        try:
-            audio = generate_audio_glow_tts(text)
-            swavfile.write(wav, rate=SAMPLING_RATE, data=audio.numpy())
 
-        except Exception as e:
-            return JsonResponse({"MESSAGE": "음성을 합성할 수 없습니다.: {str(e)}"}, status=500)
-
-        # TODO : S3에 오디오 업로드
-        # send_file(wav, mimetype="audio/wave", attachment_filename="audio.wav")
-
-        book = Book(
+        Book.objects.create(
             title=title,
-            content=content,
-            #user=user,
-            #liked_count=liked_count,
-            audio=audio,
+            content=strText
         )
-        book.save()
-        return redirect('/users')
-'''
+        return JsonResponse({"title":title, "content": strText}, status=201)
 
 
 # 내 서재 내에서 검색
