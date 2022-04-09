@@ -38,9 +38,6 @@ class BookListView(View):
         book_list = [{
             "book_id": book.id,
             "title": book.title,
-            "content" : book.content,
-            #"user_id": book.user.id,
-            #"liked_count": book.liked_count
         } for book in books]
 
         return JsonResponse({"RESULT": book_list}, status=200)
@@ -51,8 +48,6 @@ class BookListView(View):
         data = json.loads(request.body)
         title = data["title"]
         text = data["text"]
-        #title = data.get('title')
-        #text = data.get('text')
 
         text_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-text', json={'text': text})
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
