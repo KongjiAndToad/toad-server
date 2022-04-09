@@ -31,13 +31,8 @@ from translate import translate
 
 
 class BookListView(View):
-    # 내 서재 전체 조회
-#    @login_decorator
+    # 서재 전체 조회
     def get(self, request):
-        #user = request.user.id
-        #SORT = request.GET.get('sort', '')
-
-        #books = Book.objects.all().filter(user=user).order_by(SORT)
         books = Book.objects.all()
 
         book_list = [{
@@ -51,8 +46,6 @@ class BookListView(View):
         return JsonResponse({"RESULT": book_list}, status=200)
 
     # 새로운 책 생성
-
-#    @login_decorator
     def post(self, request):
 
         data = json.loads(request.body)
@@ -74,6 +67,21 @@ class BookListView(View):
             content=strText
         )
         return JsonResponse({"title":title, "content": strText}, status=201)
+
+
+class BookView(View):
+    def get(self, request, book_id):
+        book = get_object_or_404(Book, pk=book_id)
+
+        return JsonResponse(
+            {
+                "id" : book.pk,
+                "title" : book.title,
+                "content" : book.content,
+            }, status=200
+        )
+
+
 
 
 # 내 서재 내에서 검색

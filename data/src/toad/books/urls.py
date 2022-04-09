@@ -6,6 +6,7 @@ from books.views import (
     MyBookSearchView,
     LikeView,
     TestView,
+    BookView,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('/<int:book_id>/likes', LikeView.as_view()),
     path('/like-list', LikeView.as_view()),
     path('/test', TestView.as_view()),
+    path('/<int:book_id>', BookView.as_view()),
 ]

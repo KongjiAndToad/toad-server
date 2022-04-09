@@ -1,12 +1,6 @@
 
 from pathlib import Path
 import pymysql
-import dj_database_url
-
-DEBUG = True
-ALLOWED_HOSTS = ['*']
-
-
 
 pymysql.install_as_MySQLdb()
 
@@ -37,6 +31,9 @@ def get_secret(setting, secrets=secrets): #예외 처리를 통해 오류 발생
 
 SECRET_KEY = get_secret("SECRET_KEY")
 
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -52,9 +49,13 @@ INSTALLED_APPS = [
     'users',
     'books',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,8 +63,6 @@ MIDDLEWARE = [
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -164,10 +163,3 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-
-db_from_env = dj_database_url.config(conn_max_age=500) # DB 설정부분 아래에 입력
-DATABASES['default'].update(db_from_env) # DB 설정부분 아래에 입력
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
