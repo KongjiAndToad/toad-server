@@ -1,9 +1,10 @@
 import json
+import mimetypes
 import wave
 from urllib.parse import urlparse
 import urllib.request as req
 
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 from django.db.models import Q
@@ -36,6 +37,11 @@ from translate import translate
 
 
 class BookListView(View):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
     # 서재 전체 조회
     def get(self, request):
         books = Book.objects.all()
@@ -47,17 +53,17 @@ class BookListView(View):
 
         return JsonResponse({"RESULT": book_list}, status=200)
 
-
+    def handle_upload_mp3(self,f):
+        s3_client = boto3.client('s3',
+                                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        response = s3_client.upload_file(
+             f, "toad-server-bucket", f)
 
     # 새로운 책 생성
     def post(self, request):
-        '''
-        s3_client = boto3.client(
-            's3',
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
-        )
-'''
+
+
         data = json.loads(request.body)
         title = data["title"]
         text = data["text"]
@@ -66,10 +72,11 @@ class BookListView(View):
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
         #d = datetime.datetime.now()
-        filename = "./audio/tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
+        filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
         with open(filename, "wb") as file:  # open in binary mode
             response = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
+        host_image_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
@@ -77,8 +84,9 @@ class BookListView(View):
         Book.objects.create(
             title=title,
             content=strText,
-            # audio=file_url,
+            audio=host_image_url,
         )
+
         return JsonResponse({"title": title, "content": strText}, status=201)
 '''
         s3_client.upload_fileobj(
@@ -98,14 +106,29 @@ class BookListView(View):
 
 
 class BookView(View):
+
+
     def get(self, request, book_id):
         book = get_object_or_404(Book, pk=book_id)
-
+        # url=book.audio
+        # filename = url[59:]
+        # client = boto3.client('s3')
+        #
+        # client.download_file("toad-server-bucket", url, filename)
+        #
+        # # Response에 파일 첨부
+        # with open(filename, 'rb') as fh:
+        #     mime_type, _ = mimetypes.guess_type(filename)
+        #     response = HttpResponse(fh.read(), content_type=mime_type)
+        #     response['Content-Disposition'] = 'attachment;filename*=UTF-8\'\'%s' % filename
+        #     os.remove(filename)  # 서버 내의 파일 삭제
+        #     return response
         return JsonResponse(
             {
                 "id" : book.pk,
                 "title" : book.title,
                 "content" : book.content,
+                "audio" : book.audio,
             }, status=200
         )
 
