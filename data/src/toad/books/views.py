@@ -9,6 +9,7 @@ from django.views import View
 from django.db.models import Q
 from users.decorators import login_decorator
 import requests, os
+import datetime
 
 from django.shortcuts import render, redirect
 
@@ -16,6 +17,10 @@ from .models import Book
 from users.models import User
 
 import io,wave
+import uuid
+import boto3
+
+from config import settings
 
 
 '''
@@ -42,26 +47,54 @@ class BookListView(View):
 
         return JsonResponse({"RESULT": book_list}, status=200)
 
+
+
     # 새로운 책 생성
     def post(self, request):
-
+        '''
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+        )
+'''
         data = json.loads(request.body)
         title = data["title"]
         text = data["text"]
 
-        text_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-text', json={'text': text})
+        text_process = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-text', json={'text': text})
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
+        #d = datetime.datetime.now()
+        filename = "./audio/tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
+        with open(filename, "wb") as file:  # open in binary mode
+            response = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
+            file.write(response.content)  # write to file
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
 
-
         Book.objects.create(
             title=title,
-            content=strText
+            content=strText,
+            # audio=file_url,
         )
-        return JsonResponse({"title":title, "content": strText}, status=201)
+        return JsonResponse({"title": title, "content": strText}, status=201)
+'''
+        s3_client.upload_fileobj(
+            file,
+            "toad-server-bucket",
+            filename
+        )
+        file_url = f"https://s3.ap-northeast-2.amazonaws.com/toad-server-bucket/"+filename
+
+        #URL = 'https://c17d-121-65-255-145.ngrok.io/tts-server/api/process-audio'
+        #file = req.get(url, allow_redirects=True)
+
+        #open('facebook.ico', 'wb').write(file.content)
+'''
+
+
 
 
 class BookView(View):
