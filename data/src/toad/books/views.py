@@ -20,6 +20,7 @@ from users.models import User
 import io,wave
 import uuid
 import boto3
+import os
 
 from config import settings
 
@@ -68,17 +69,19 @@ class BookListView(View):
         title = data["title"]
         text = data["text"]
 
-        text_process = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-text', json={'text': text})
+        text_process = requests.post(url='https://5e17-121-65-255-139.ngrok.io/tts-server/api/process-text', json={'text': text})
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
         #d = datetime.datetime.now()
         filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
         with open(filename, "wb") as file:  # open in binary mode
-            response = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
+            response = requests.post(url='https://5e17-121-65-255-139.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
 
         self.handle_upload_mp3(filename)
         file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
+
+        os.remove("./"+filename)
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
