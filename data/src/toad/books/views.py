@@ -76,7 +76,9 @@ class BookListView(View):
         with open(filename, "wb") as file:  # open in binary mode
             response = requests.post(url='https://537e-121-65-255-145.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
-        host_image_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
+
+        self.handle_upload_mp3(filename)
+        file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
@@ -84,10 +86,10 @@ class BookListView(View):
         Book.objects.create(
             title=title,
             content=strText,
-            audio=host_image_url,
+            audio=file_url,
         )
 
-        return JsonResponse({"title": title, "content": strText}, status=201)
+        return JsonResponse({"title": title, "content": strText, "audio" : file_url}, status=201)
 '''
         s3_client.upload_fileobj(
             file,
@@ -240,12 +242,32 @@ class LikeView(View):
         }, status=200)
 
 class TestView(View):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
+
+    def handle_upload_mp3(self,f):
+        s3_client = boto3.client('s3',
+                                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        response = s3_client.upload_file(
+             f, "toad-server-bucket", f)
+
+    def post(self, request):
+        self.handle_upload_mp3("test.wav")
+        file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/test.wav"
+        return JsonResponse({
+            "url": file_url
+        })
+
     def get(self, request):
         response = requests.get(url="http://localhost:8080/todo/1")
         return JsonResponse({
             "content": response.json()
         })
-
+'''
     def post(self, request):
 
         os.environ['NO_PROXY'] = '127.0.0.1'
@@ -263,3 +285,4 @@ class TestView(View):
         return JsonResponse({
             "name" : stringcontent
         })
+'''

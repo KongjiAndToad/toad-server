@@ -120,3 +120,4 @@ dmypy.json
 *my_settings.py
 
 audio/
+*.wav
