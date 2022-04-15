@@ -54,12 +54,12 @@ class BookListView(View):
 
         return JsonResponse({"RESULT": book_list}, status=200)
 
-    def handle_upload_mp3(self,f):
+    def handle_upload_mp3(self,f,filename):
         s3_client = boto3.client('s3',
                                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         response = s3_client.upload_file(
-             f, "toad-server-bucket", f)
+             f, "toad-server-bucket", filename)
 
     # 새로운 책 생성
     def post(self, request):
