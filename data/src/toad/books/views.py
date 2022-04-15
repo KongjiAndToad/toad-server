@@ -54,12 +54,12 @@ class BookListView(View):
 
         return JsonResponse({"RESULT": book_list}, status=200)
 
-    def handle_upload_mp3(self,f,filename):
+    def handle_upload_mp3(self,f):
         s3_client = boto3.client('s3',
                                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
         response = s3_client.upload_file(
-             f, "toad-server-bucket", filename)
+             f, "toad-server-bucket", f)
 
     # 새로운 책 생성
     def post(self, request):
@@ -73,17 +73,16 @@ class BookListView(View):
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
         #d = datetime.datetime.now()
-        fileid=str(uuid.uuid1()).replace('-','')
-        filepath="./audio/tts-audio"+fileid+".wav"
-        filename = "tts-audio"+fileid+".wav"
-        with open(filepath, "wb") as file:  # open in binary mode
+
+        filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
+        with open(filename, "wb") as file:  # open in binary mode
             response = requests.post(url='https://e0cb-183-96-159-131.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
 
-        self.handle_upload_mp3(filepath)
+        self.handle_upload_mp3(filename)
         file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
 
-        os.remove("./audio/"+filename)
+        os.remove(filename)
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
