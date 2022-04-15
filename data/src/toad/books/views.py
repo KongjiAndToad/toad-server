@@ -73,12 +73,14 @@ class BookListView(View):
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
         #d = datetime.datetime.now()
-        filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
-        with open(filename, "wb") as file:  # open in binary mode
+        fileid=str(uuid.uuid1()).replace('-','')
+        filepath="./audio/tts-audio"+fileid+".wav"
+        filename = "tts-audio"+fileid+".wav"
+        with open(filepath, "wb") as file:  # open in binary mode
             response = requests.post(url='https://5e17-121-65-255-139.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
 
-        self.handle_upload_mp3(filename)
+        self.handle_upload_mp3(filepath)
         file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
 
         os.remove("./"+filename)
