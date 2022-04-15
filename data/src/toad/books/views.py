@@ -83,7 +83,7 @@ class BookListView(View):
         self.handle_upload_mp3(filepath)
         file_url = "https://toad-server-bucket.s3.ap-northeast-2.amazonaws.com/" + filename
 
-        os.remove("./"+filename)
+        os.remove("./audio/"+filename)
 
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
