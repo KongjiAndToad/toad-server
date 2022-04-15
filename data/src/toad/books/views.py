@@ -69,7 +69,7 @@ class BookListView(View):
         title = data["title"]
         text = data["text"]
 
-        text_process = requests.post(url='https://5e17-121-65-255-139.ngrok.io/tts-server/api/process-text', json={'text': text})
+        text_process = requests.post(url='https://e0cb-183-96-159-131.ngrok.io/tts-server/api/process-text', json={'text': text})
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
         #d = datetime.datetime.now()
@@ -77,7 +77,7 @@ class BookListView(View):
         filepath="./audio/tts-audio"+fileid+".wav"
         filename = "tts-audio"+fileid+".wav"
         with open(filepath, "wb") as file:  # open in binary mode
-            response = requests.post(url='https://5e17-121-65-255-139.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
+            response = requests.post(url='https://e0cb-183-96-159-131.ngrok.io/tts-server/api/process-audio', json={'text': text})  # get request
             file.write(response.content)  # write to file
 
         self.handle_upload_mp3(filepath)
