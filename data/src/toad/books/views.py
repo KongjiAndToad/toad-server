@@ -25,14 +25,6 @@ import os
 from config import settings
 
 
-'''
-from text_processor import process_text
-from synthesys import SAMPLING_RATE
-from synthesys import generate_audio_glow_tts
-from io import BytesIO
-import scipy.io.wavfile as swavfile
-from translate import translate
-'''
 
 
 
@@ -94,20 +86,6 @@ class BookListView(View):
         )
 
         return JsonResponse({"title": title, "content": strText, "audio" : file_url}, status=201)
-'''
-        s3_client.upload_fileobj(
-            file,
-            "toad-server-bucket",
-            filename
-        )
-        file_url = f"https://s3.ap-northeast-2.amazonaws.com/toad-server-bucket/"+filename
-
-        #URL = 'https://c17d-121-65-255-145.ngrok.io/tts-server/api/process-audio'
-        #file = req.get(url, allow_redirects=True)
-
-        #open('facebook.ico', 'wb').write(file.content)
-'''
-
 
 
 
@@ -116,19 +94,7 @@ class BookView(View):
 
     def get(self, request, book_id):
         book = get_object_or_404(Book, pk=book_id)
-        # url=book.audio
-        # filename = url[59:]
-        # client = boto3.client('s3')
-        #
-        # client.download_file("toad-server-bucket", url, filename)
-        #
-        # # Response에 파일 첨부
-        # with open(filename, 'rb') as fh:
-        #     mime_type, _ = mimetypes.guess_type(filename)
-        #     response = HttpResponse(fh.read(), content_type=mime_type)
-        #     response['Content-Disposition'] = 'attachment;filename*=UTF-8\'\'%s' % filename
-        #     os.remove(filename)  # 서버 내의 파일 삭제
-        #     return response
+
         return JsonResponse(
             {
                 "id" : book.pk,
@@ -138,7 +104,10 @@ class BookView(View):
             }, status=200
         )
 
-
+    def delete(self, request, book_id):
+        book = get_object_or_404(Book, pk=book_id)
+        book.delete()
+        return JsonResponse({"MESSAGE": "SUCCESS"}, status=204)
 
 
 # 내 서재 내에서 검색
