@@ -61,6 +61,9 @@ class BookListView(View):
         title = data["title"]
         text = data["text"]
 
+        if '\n' in text:
+            text.strip('\n')
+
         text_process = requests.post(url='http://15.152.69.33:5000/tts-server/api/process-text', json={'text': text})
         #audio_process = requests.post(url='https://11fd-121-162-241-249.ngrok.io/tts-server/api/process-audio', json={'text': text})
 
