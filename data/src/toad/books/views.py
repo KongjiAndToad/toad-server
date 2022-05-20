@@ -61,13 +61,15 @@ class BookListView(View):
         title = data["title"]
         text = data["text"]
 
-        strText = text
+        #strText = text
 
-        #text_process = requests.post(url='http://15.152.69.33:5000/tts-server/api/process-text', json={'text': text})
+        text_process = requests.post(url='http://15.152.69.33:5000/tts-server/api/process-text', json={'text': text})
 
-        #jsonText = text_process.json()
-        #strText = str(jsonText)[2:-2]
+        jsonText = text_process.json()
+        strText = str(jsonText)[2:-2]
 
+        strText = strText.replace(', ',' ')
+        
         filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
         with open(filename, "wb") as file:  # open in binary mode
             response = requests.post(url='http://15.152.69.33:5000/tts-server/api/process-audio', json={'text': strText})  # get request
@@ -85,7 +87,7 @@ class BookListView(View):
             audio=file_url,
         )
 
-        
+
         return JsonResponse({"title": title, "content": strText, "audio" : file_url}, status=201)
 
 
