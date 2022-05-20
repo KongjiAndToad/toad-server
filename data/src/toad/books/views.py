@@ -68,8 +68,8 @@ class BookListView(View):
         jsonText = text_process.json()
         strText = str(jsonText)[2:-2]
 
-        strText = strText.replace(', ',' ')
-        
+        strText = strText.replace("', '", ' ')
+
         filename = "tts-audio"+str(uuid.uuid1()).replace('-','')+".wav"
         with open(filename, "wb") as file:  # open in binary mode
             response = requests.post(url='http://15.152.69.33:5000/tts-server/api/process-audio', json={'text': strText})  # get request
